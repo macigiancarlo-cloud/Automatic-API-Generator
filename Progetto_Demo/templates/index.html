@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>REST API Generator Dashboard</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .btn { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        .btn:hover { background-color: #45a049; }
+        .success { color: green; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>REST API Generator Dashboard</h1>
+    <p>Database loaded: <strong>database.db</strong></p>
+    
+    <h2>Detected Tables:</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Table Name</th>
+                <th>Columns</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tabella in tabelle %}
+            <tr>
+                <td>{{ tabella.nome }}</td>
+                <td>{{ tabella.colonne }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <form action="/genera">
+        <button type="submit" class="btn">Generate API Code</button>
+    </form>
+
+    {% if msg %}
+    <p class="success">{{ msg }}</p>
+    {% endif %}
+</body>
+</html>
