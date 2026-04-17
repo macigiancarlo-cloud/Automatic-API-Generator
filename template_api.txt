@@ -1,0 +1,67 @@
+from flask import Flask, request, jsonify
+import sqlite3
+
+app = Flask(__name__)
+
+def get_connection():
+    return sqlite3.connect('database.db')
+
+# --- AUTOMATIC DOCUMENTATION ---
+@app.route('/docs', methods=['GET'])
+def documentation():
+    html = f"""
+    <h1>API Documentation: {{NOME_TABELLA}}</h1>
+    <p>Base URL: /{{NOME_TABELLA}}</p>
+    
+    <h2>Available Endpoints:</h2>
+    <ul>
+        <li><b>GET</b> /{{NOME_TABELLA}} - Read all records</li>
+        <li><b>POST</b> /{{NOME_TABELLA}} - Create a new record</li>
+        <li><b>DELETE</b> /{{NOME_TABELLA}}/&lt;id&gt; - Delete a record</li>
+    </ul>
+    
+    <h3>JSON Example for insertion (POST):</h3>
+    <pre>
+    {{
+        "required_fields": [{{COLONNE_LIST}}],
+        "example": {{
+            {{JSON_EXAMPLE}}
+        }}
+    }}
+    </pre>
+    """
+    return html
+
+# --- GET ALL (Read all) ---
+@app.route('/{{NOME_TABELLA}}', methods=['GET'])
+def api_get_all_{{NOME_TABELLA}}():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM {{NOME_TABELLA}}")
+    rows = cursor.fetchall()
+    conn.close()
+    return jsonify(rows)
+
+# --- POST (Create new) ---
+@app.route('/{{NOME_TABELLA}}', methods=['POST'])
+def api_add_{{NOME_TABELLA}}():
+    data = request.json
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO {{NOME_TABELLA}} ({{COLONNE}}) VALUES ({{PLACEHOLDER}})", tuple(data[col] for col in [{{COLONNE_LIST}}]))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Insert successful"}), 201
+
+# --- DELETE (Delete by ID) ---
+@app.route('/{{NOME_TABELLA}}/<int:id>', methods=['DELETE'])
+def api_delete_{{NOME_TABELLA}}(id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM {{NOME_TABELLA}} WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Deletion successful"})
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
